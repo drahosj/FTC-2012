@@ -1,0 +1,4 @@
+This repository contains all of the source files for our 2012-Season FTC Competition
+
+Files:
+ - teleop.c: Basic teleop program
