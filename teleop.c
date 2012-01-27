@@ -1,8 +1,8 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  none)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorNormal, openLoop)
-#pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorNormal, openLoop, reversed)
-#pragma config(Motor,  mtr_S1_C2_1,     motorF,        tmotorNormal, openLoop)
+#pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorNormal, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorNormal, openLoop)
+#pragma config(Motor,  mtr_S1_C2_1,     motorF,        tmotorNormal, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C2_2,     motorG,        tmotorNormal, openLoop)
 #pragma config(Servo,  srvo_S1_C3_1,    servo1,               tServoNone)
 #pragma config(Servo,  srvo_S1_C3_2,    servo2,               tServoNone)
@@ -26,14 +26,15 @@
 					  Servo
 *///End Controller Config Diagram\\\\
 
-#define CLAMP_START 100
-#define BALL_SERVO_START 100
-#define CLAMP_OUT_BTN 1
-#define CLAMP_IN_BTN 2
-#define BALL_UP_BTN 3
-#define BALL_DOWN_BTN 4
-#define BALL_IN_BTN 5
-#define BALL_OUT_BTN 6
+#define CLAMP_START 0
+#define BALL_SERVO_START 0
+#define CLAMP_OUT_BTN 2
+#define CLAMP_IN_BTN 1
+#define BALL_UP_BTN 8
+#define BALL_DOWN_BTN 6
+#define BALL_IN_BTN 7
+#define BALL_OUT_BTN 5
+#define REVERSE_BTN 6
 
 
 void init()
@@ -43,6 +44,8 @@ void init()
 
 	servo[servoC] = CLAMP_START;
 
+	servoChangeRate[servoA] = 1;
+	servoChangeRate[servoB] = 1;
 	//TODO: SET SERVO CHANGE RATES!!!
 }
 
@@ -70,7 +73,7 @@ task main()
 
 		if (joy2Btn(BALL_IN_BTN))
 			ballFeedMotor = -50; //move it outwards
-		else if (joy2Btn(BALL_IN_BTN))
+		else if (joy2Btn(BALL_OUT_BTN))
 			ballFeedMotor = 50;  //move it inwards
 		else
 			ballFeedMotor = 0; //move it to where it is (ie. stay still)
@@ -95,14 +98,21 @@ task main()
 			ballServo = ServoValue[servoA]; //move to where it is (stay still)
 
 
+		//THAT THING THAT REVERSES MOTORS\\
+
+		if(joy1Btn(REVERSE_BTN))
+		{
+		  leftMotor = leftMotor * -1;
+		  rightMotor = rightMotor * -1;
+		}
 		//THIS STUFF SHOULD BE GOOD TO KEEP!!!!\\
 		//=====================================\\
 
 		motor[motorD] = leftMotor; //set left motor to left value
-		motor[motorE] = rightMotor; //set right motor to right value
+		motor[motorG] = rightMotor; //set right motor to right value
 
-		motor[motorF] = notArmMotor; //set not-arm motor to not-arm-motor value
-		motor[motorG] = scissorMotor; //set scissor motor to scissor value
+		motor[motorE] = notArmMotor/4; //set not-arm motor to not-arm-motor value
+		motor[motorF] = scissorMotor; //set scissor motor to scissor value
 
 		motor[motorA] = ballFeedMotor;
 
